@@ -78,7 +78,7 @@
   <canvas id="fx" aria-hidden="true"></canvas>
   <div id="hud">
     <div class="topbar">
-      <div class="brand"><div class="brand-mark"></div><div><b>BLOCKWORLD</b><small>CREATIVE SANDBOX</small></div></div>
+      <div class="brand"><div class="brand-mark"></div><div><b>BLOCKWORLD</b><small>SURVIVAL · CREATIVE</small></div></div>
       <div class="top-actions"><button class="ui-btn" id="inv-btn">INVENTORY <span style="opacity:.65">[E]</span></button><button class="ui-btn" id="pause-btn">PAUSE <span style="opacity:.65">[ESC]</span></button></div>
     </div>
     <div id="stats"><span>POSITION</span><b id="coords">0 / 0 / 0</b> <span style="margin-left:9px">MODE</span><b id="mode-label">SURVIVAL</b></div>
@@ -86,7 +86,7 @@
     <div id="minimap-wrap"><canvas id="minimap" width="120" height="120"></canvas></div>
     <div id="crosshair"></div><div id="target-label"></div>
     <div id="toast"></div>
-    <div id="hint">WASD MOVE · SHIFT SPRINT · SPACE JUMP · CLICK MINE · RIGHT CLICK PLACE · 1–9 SELECT · E INVENTORY</div>
+    <div id="hint">WASD MOVE · SHIFT SPRINT · SPACE JUMP · CLICK MINE · RIGHT CLICK PLACE · 1–9 SELECT · E INVENTORY · F EAT</div>
     <div id="hotbar"></div>
     <div id="inventory"><button class="ui-btn inv-close" id="close-inv">CLOSE [E]</button><h2 id="inv-title">SURVIVAL INVENTORY</h2><p id="inv-subtitle">Choose a block for your hotbar. Mine resources and craft stronger gear.</p><div class="inv-grid" id="inv-grid"></div><div id="craft-panel"><h3>WORKBENCH · QUICK CRAFT</h3><button class="craft-recipe" data-craft="planks"><span><b>4 OAK PLANKS</b><br><small>1 Oak Log</small></span><small>CRAFT</small></button><button class="craft-recipe" data-craft="brick"><span><b>2 BRICKS</b><br><small>4 Stone + 1 Coal Ore</small></span><small>CRAFT</small></button><button class="craft-recipe" data-craft="sword"><span><b>IRON SWORD</b><br><small>2 Iron Ore + 2 Oak Planks</small></span><small>CRAFT</small></button></div></div>
     <div id="mobile-controls">
@@ -258,7 +258,7 @@ function requestLock(){if(canvas.requestPointerLock&&!('ontouchstart'in window))
 $('start').addEventListener('click',()=>{if(paused){resumeGame();return;}started=true;$('overlay').style.display='none';$('hint').style.display='block';requestLock();canvas.focus();updateModeUI();toast(gameMode==='survival'?'Survive the night, explorer':'Welcome to Creative BlockWorld');saveWorld();});
 $('pause-btn').addEventListener('click',()=>pauseGame());
 function pauseGame(){if(!started)return;if(inventoryOpen)toggleInventory(false);paused=true;if(document.pointerLockElement)document.exitPointerLock();saveWorld();showPause();}
-function showPause(){const ov=$('overlay');ov.style.display='flex';ov.querySelector('.eyebrow').textContent='TAKE A BREATHER';ov.querySelector('.logo-title').innerHTML='WORLD <em>PAUSED</em>';ov.querySelector('.subtitle').textContent='Your world is waiting exactly where you left it.';ov.querySelector('.feature-row').innerHTML='<span class="pill">LOCAL AUTOSAVE</span><span class="pill">CREATIVE MODE</span><span class="pill">DAY / NIGHT</span>';ov.querySelector('.controls-copy').style.display='none';ov.querySelector('.footnote').innerHTML='Your edits and player position save automatically in this browser.';$('start').textContent='RESUME WORLD';}
+function showPause(){const ov=$('overlay');ov.style.display='flex';ov.querySelector('.eyebrow').textContent='TAKE A BREATHER';ov.querySelector('.logo-title').innerHTML='WORLD <em>PAUSED</em>';ov.querySelector('.subtitle').textContent='Your world is waiting exactly where you left it.';ov.querySelector('.feature-row').innerHTML='<span class="pill">LOCAL AUTOSAVE</span><span class="pill">'+(gameMode==='survival'?'SURVIVAL MODE':'CREATIVE MODE')+'</span><span class="pill">DAY / NIGHT</span>';ov.querySelector('.controls-copy').style.display='none';ov.querySelector('.footnote').innerHTML='World edits, inventory, health and progress save automatically in this browser.';$('start').textContent='RESUME WORLD';}
 function resumeGame(){paused=false;$('overlay').style.display='none';$('overlay').querySelector('.eyebrow').textContent='A LITTLE WORLD, YOUR RULES';$('overlay').querySelector('.logo-title').innerHTML='BLOCK<span style="color:#fff">WORLD</span><em>.</em>';$('overlay').querySelector('.subtitle').textContent='Explore, survive the night, craft gear and build a world of your own.';$('overlay').querySelector('.feature-row').innerHTML='<span class="pill">✦ PROCEDURAL TERRAIN</span><span class="pill">☾ DAY / NIGHT</span><span class="pill">⚔ ZOMBIE WAVES</span><span class="pill">▦ CRAFT & BUILD</span>';$('overlay').querySelector('.controls-copy').style.display='grid';$('overlay').querySelector('.footnote').innerHTML='Desktop: WASD move · click to look · E inventory · F eat apple · click mine / right-click place.<br>Mobile: use the on-screen controls and drag the world to look.';$('start').textContent='ENTER WORLD';requestLock();updateModeUI();}
 document.addEventListener('pointerlockchange',()=>{locked=document.pointerLockElement===canvas;if(started&&!locked&&!paused&&!inventoryOpen&&innerWidth>650)pauseGame();});
 
