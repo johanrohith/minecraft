@@ -1,0 +1,17 @@
+.boot-fallback {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #f4ecd8;
+  background: #07110c;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.boot-fallback__mark {
+  margin: 0;
+  font-size: 40px;
+  letter-spacing: -0.04em;
+}
