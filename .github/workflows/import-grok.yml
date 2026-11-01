@@ -24,6 +24,7 @@ jobs:
           from pathlib import Path
           from zipfile import ZipFile
           import shutil
+          import stat
 
           archive = Path("grok-workspace.zip")
           target = Path("grok")
@@ -46,6 +47,9 @@ jobs:
                   destination.parent.mkdir(parents=True, exist_ok=True)
                   with z.open(info) as source, destination.open("wb") as output:
                       shutil.copyfileobj(source, output)
+                  mode = (info.external_attr >> 16) & 0o777
+                  if mode:
+                      destination.chmod(mode)
           PY
 
       - name: Remove temporary import files and commit
