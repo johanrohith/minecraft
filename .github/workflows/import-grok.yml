@@ -1,0 +1,58 @@
+name: Import Grok workspace
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "grok-workspace.zip"
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Extract archive into grok
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import shutil
+
+          archive = Path("grok-workspace.zip")
+          target = Path("grok")
+          if not archive.is_file():
+              raise SystemExit("grok-workspace.zip was not found")
+
+          if target.exists():
+              shutil.rmtree(target)
+          target.mkdir(parents=True)
+
+          root = target.resolve()
+          with ZipFile(archive) as z:
+              for info in z.infolist():
+                  name = info.filename
+                  if not name or name.endswith("/"):
+                      continue
+                  destination = (target / name).resolve()
+                  if destination != root and root not in destination.parents:
+                      raise SystemExit(f"Unsafe archive path: {name}")
+                  destination.parent.mkdir(parents=True, exist_ok=True)
+                  with z.open(info) as source, destination.open("wb") as output:
+                      shutil.copyfileobj(source, output)
+          PY
+
+      - name: Remove temporary import files and commit
+        run: |
+          rm -f grok-workspace.zip .github/workflows/import-grok.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Import Grok workspace"
+          git push origin HEAD:main
