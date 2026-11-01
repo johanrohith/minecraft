@@ -1,0 +1,33 @@
+name: Validate ChatGPT Minecraft
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "chatgpt/index.html"
+      - ".github/workflows/validate-chatgpt-game.yml"
+  pull_request:
+    paths:
+      - "chatgpt/index.html"
+      - ".github/workflows/validate-chatgpt-game.yml"
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Extract inline game script
+        run: |
+          python - <<'PY'
+          import pathlib, re
+          html = pathlib.Path("chatgpt/index.html").read_text(encoding="utf-8")
+          scripts = re.findall(r"<script\\b[^>]*>([\\s\\S]*?)</script>", html, re.I)
+          if len(scripts) != 1:
+              raise SystemExit(f"Expected one inline script, found {len(scripts)}")
+          pathlib.Path("/tmp/blockworld.js").write_text(scripts[0], encoding="utf-8")
+          PY
+      - name: Check JavaScript syntax
+        run: node --check /tmp/blockworld.js
